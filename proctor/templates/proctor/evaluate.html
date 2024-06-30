@@ -1,0 +1,31 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+
+    {% if user.is_authenticated %}
+        <h2>{{exam.title}}</h2>
+        <br>
+        <h3 style="color: rgb(104, 45, 222);">Result Score: {{score}}/{{total}}</h3>
+        <br>
+        <h3>RESPONSE:</h3><br>
+        {% if message %}
+            <h4 style="color: orange;">{{message}}</h4>
+        {% endif %}
+        <ol>
+        {% for response in responses %}
+            <li>
+            <div>
+                <h4>Question: {{response.question.question}}</h4><br>
+                <h5>Correct Answer: {{response.question.answer}}</h5><br>
+                <h5>Your Answer: {{response.answer}}</h5>
+                {% if response.question.answer == response.answer %}
+                    <h5 style="color: green;">Correct</h5>
+                {% else %}
+                    <h5 style="color: red;">Incorrect</h5>
+                {% endif %}
+            </div>
+            </li>
+        {% endfor %}
+        </ol>
+    {% endif %}
+{% endblock %}

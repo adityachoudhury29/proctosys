@@ -1,0 +1,24 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+<h1>Your current exam report:</h1>
+<ol>
+{% for i in exams %}
+<li>
+    <h2>{{ i.title }}</h2>
+    <p>Exam Duration: {{ i.duration }}</p><br>
+    <p>Exam Instructions/Description: </p>
+    <p>{{ i.description }}</p><br>
+    <p>Exam Proctor: {{ i.proctor.first_name }} {{ i.proctor.last_name }}</p><br>
+    <p>Exam Student: {{ i.student.first_name }} {{ i.student.last_name }}</p><br>
+    {% if i.unfair_means %}
+        <p>Result: <a href="{% url 'exam_ended' i.id %}">Unfair means detected</a></p>
+    {% else %}
+        <p>Result: <a href="{% url 'evaluate' i.id %}">Evaluated score</a></p>
+    {% endif %}
+    <br>
+</li>
+{% endfor %}
+</ol>
+
+{% endblock %}

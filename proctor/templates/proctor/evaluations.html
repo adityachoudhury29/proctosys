@@ -1,0 +1,24 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+    <h2>Evaluated results:</h2>
+    <ul>
+        {% for i in ev_exams %}
+        <li>
+            <a href="{% url 'evaluate' i.id %}">{{i.title}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <h2>Terminated exams:</h2>
+    <ul>
+        {% for i in term_exams %}
+        <li>
+            <a href="{% url 'exam_ended' i.id %}">{{i.title}}</a>
+            <p>(Unfair means detected)</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endblock %}

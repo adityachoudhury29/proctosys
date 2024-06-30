@@ -1,0 +1,85 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+    <div class="d-flex justify-content-center">
+    <h1>Calendar {{ year }}</h1>
+    </div><br>
+    <div class="d-flex justify-content-center">
+    <a href="{% url 'calendar_next_year' %}"><button class="btn btn-outline-light">Calender for next year</button></a>
+    </div>
+    <div class="color-scheme">
+        <div class="color-item">
+            <div class="color-circle" style="background-color: rgb(30, 239, 82);"></div>
+            <span class="color-label">Today+Exam day</span>
+        </div>
+        <div class="color-item">
+            <div class="color-circle" style="background-color: rgb(30, 239, 204)"></div>
+            <span class="color-label">Exam day</span>
+        </div>
+        <div class="color-item">
+            <div class="color-circle" style="background-color: rgb(255, 160, 35)"></div>
+            <span class="color-label">Today</span>
+        </div>
+    </div>
+    <div class="calendar-container">
+    {% for month, calendar in year_calendar.items %}
+    <div class="month-calendar">    
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th colspan="7">{{ month }} / {{ year }}</th>
+                </tr>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for week in calendar %}
+                <tr>
+                    {% for day in week %}
+                        {% if day == 0 %}
+                            <td class="empty"></td>
+                        {% else %}
+                            {% with year_str=year|stringformat:"04d" month_str=month|stringformat:"02d" day_str=day|stringformat:"02d" %}
+                            {% with year_str|add:"-"|add:month_str|add:"-"|add:day_str as st %}
+                            {% if st in exam_dates %}
+                            {% if day == today and month == current_month and year == current_year %}
+                            <td onclick="date('{{day}}','{{month}}','{{year}}')" class="exam_day_today">
+                                {{ day }}
+                            </td>
+                            {% else %}
+                            <td onclick="date('{{day}}','{{month}}','{{year}}')" class="exam_day">
+                                {{ day }}
+                            </td>
+                            {% endif %}
+                            {% else %}
+                            <td onclick="date('{{day}}','{{month}}','{{year}}')" class="{% if day == today and month == current_month and year == current_year %}today{% endif %}">
+                                {{ day }}
+                            </td>
+                            {% endif %}
+                            {% endwith %}
+                            {% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+    </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    function date(day, month, year) {
+        window.location.href = 'date_exam/' + year + '-' + month + '-' + day;
+    }
+</script>
+{% endblock %}

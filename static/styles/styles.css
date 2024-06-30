@@ -1,0 +1,305 @@
+body{
+    background-color: rgb(20, 20, 20);
+    padding: 15px;
+    color: white;
+}
+
+hr{
+    background-color: rgb(20, 20, 20);
+    width: 100%;
+}
+
+#boss-heading{
+    color: orangered;
+    font-size: 50px;
+    width: 0px;
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    background-color: black;
+    color: white;
+    padding: 20px 0;
+    position: absolute;
+    width: 100%;
+    margin: -15px;
+    bottom: 0;
+}
+
+.footer-container {
+    width: 95%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-contact h3 {
+    margin-bottom: 10px;
+}
+
+.footer-contact p {
+    margin: 5px 0;
+}
+
+.footer-contact a {
+    color: #ff6f61;
+    text-decoration: none;
+}
+
+.footer-contact a:hover {
+    text-decoration: underline;
+}
+
+nav {
+    background-color: black;
+    padding: 10px;
+    margin: -15px;
+}
+
+.calendar-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.month-calendar {
+    flex: 1 1 calc(33.33% - 20px); 
+    margin: 10px;
+    box-sizing: border-box;
+}
+
+
+.calendar-table {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-table th, .calendar-table td {
+    border: 1px solid orangered;
+    padding: 10px;
+    text-align: center;
+    width: 14.28%; /* 100% divided by 7 days */
+}
+
+.calendar-table th {
+    background-color: rgb(39, 39, 39);
+}
+
+.calendar-table td.empty {
+    background-color: black;
+}
+
+.calendar-table td.today {
+    background-color: rgb(255, 160, 35);
+}
+
+.calendar-table td.today:hover {
+    background-color: rgb(255, 182, 63);
+}
+
+.calendar-table td.exam_day {
+    background-color: rgb(30, 239, 204);
+}
+
+.calendar-table td.exam_day:hover {
+    background-color: rgb(17, 145, 134);
+}
+
+.calendar-table td.exam_day_today {
+    background-color: rgb(30, 239, 82);
+}
+
+.calendar-table td.exam_day_today:hover {
+    background-color: rgb(14, 157, 31);
+}
+
+.calendar-table td.empty:hover {
+    background-color: black;
+}
+
+.calendar-table td {
+    background-color: black;
+    transition: background-color 0.3s;
+}
+
+.calendar-table td:hover {
+    background-color: orangered;
+}
+
+.calendar-table th[colspan="7"] {
+    background-color: #333;
+    color: #fff;
+    font-size: 1.2em;
+}
+
+.my_pri_button{
+    background-color: rgb(255, 68, 0);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.my_pri_button:hover{
+    background-color: rgb(255, 130, 46);
+}
+
+.my_pri_button:disabled{
+    background-color: rgba(255, 68, 0, 0.5);
+}
+
+.my_pri_button:disabled:hover{
+    background-color: rgba(255, 68, 0, 0.5);
+}
+
+.remove-question-btn{
+    background-color: rgb(248, 52, 52);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+a{
+    color: orangered;
+    text-decoration: none;
+}
+
+a:hover{
+    color: rgb(255, 182, 63);
+    text-decoration: underline;
+}
+
+.logged-out {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping of flex items */
+    justify-content: space-between;
+}
+
+.auth, .logo{
+    flex: 1 1 45%; /* Flex items take 45% of the container width */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+    padding: 10px;
+    margin: 10px;
+}
+
+.auth{
+    padding-top: 100px;
+}
+
+.logo{
+    padding-top: 40px;
+
+}
+
+@media (max-width: 768px) {
+    .left-div, .right-div {
+        flex: 1 1 100%; /* Flex items take 100% of the container width on small screens */
+    }
+}
+
+.custom-input-bg {
+    background-color: #393939;
+}
+
+input{
+    width: 200px;
+    height: 45px;
+    border-radius: 5px;
+    border: 1px solid white;
+}
+
+.color-scheme {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 30px;
+}
+
+.color-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    text-align: center;
+}
+
+.color-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.color-label {
+    font-size: 14px;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+.navbar-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.panel {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0; /* Initially keep the panel on the right edge of the screen */
+    background-color: #202020b8;
+    width: 250px;
+    height: 100%;
+    overflow-x: hidden;
+    padding-top: 60px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease; /* Apply transition to transform property */
+    transform: translateX(100%); /* Move the panel out of the screen to the right */
+}
+
+.panel.open {
+    transform: translateX(0); /* When panel is open, move it into the screen */
+}
+
+.panel a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+}
+
+.panel a:hover {
+    background-color: #1a1a1a;
+}
+
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    margin-top: -30px;
+}
+
+.bar {
+    width: 30px;
+    height: 5px;
+    background-color: #ffffff;
+}

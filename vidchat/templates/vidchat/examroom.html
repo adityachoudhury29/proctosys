@@ -1,0 +1,78 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+
+<br>
+<h1>Exam: {{ exam.title }}</h1>
+<br>
+<h4>Examinee: {{ exam.student.first_name }} {{ exam.student.last_name }}</h2>
+<br>
+<h4>Exam duration: {{ exam.start_time }} - {{ exam.end_time }} ({{ exam.duration }} minutes)</h3><br>
+<h4>Exam instructions:</h4>
+<p>Note: 
+<ol>
+<li>This exam is proctored. Please make sure you have a stable internet connection and a working webcam.</li><li>Your face will be proctored by a live proctor for the entire duration of the examination.</li>
+<li>You are not allowed to leave the exam room during the exam. You are not allowed to use any other device during the exam. You are not allowed to talk to anyone during the exam. You are not allowed to use any other browser tab or window during the exam. You are not allowed to use any other software during the exam.</li><li>
+You are not allowed to use any unfair means during the exam. If any unfair means are detected, your exam will be terminated immediately and you will be marked as failed. There will be no warning before exam termination. So it is strictly suggested to adhere to the rules.</li>
+<li>Unfair means include, but are not limited to, tab or window change, navigation to other URLs, reloading of the exam page, etc. Refrain from doing these actions, or your exam will be terminated immediately.</li>
+<li>Exam questions shall remain hidden until webcam access is granted. So make sure to allow your webcam at the start of the examination, and keep it on for the entire duration of the examination.</li>
+</ol></p><br>
+<h4>Exam description:</h5>
+<p>{{ exam.description }}</p>
+<br>
+{% if myprof.role == "student" %}
+    <strong><p>Start button shall be enabled 10 seconds before the mentioned start time of the exam.</p></strong>
+{% else %}
+    <strong><p>Start button shall be enabled 5 minutes before the mentioned start time of the exam.</p></strong>
+{% endif %}
+<button id="start_exam" class="my_pri_button" disabled>Start</button>
+<div id="proctor_uname" hidden>{{ exam.proctor.username }}</div>
+<div id="student_uname" hidden>{{ exam.student.username }}</div>
+<div id="role" hidden>{{ myprof.role }}</div>
+<div id="exam_id" hidden>{{ exam.id }}</div>
+
+{% endblock %}
+
+
+{% block script %}
+<script>
+    var role = document.getElementById("role").innerHTML;
+    function checkStartTime() {
+        var startTime = new Date("{{ exam.start_time|date:'Y-m-d H:i:s' }}").getTime();
+        var currentTime = new Date().getTime();
+        if (role == "proctor") {
+            if (currentTime >= startTime-300000) {
+                document.getElementById("start_exam").disabled = false;
+            } else {
+                setTimeout(checkStartTime, 1000);
+            }
+        }else{
+            if (currentTime >= startTime-10000) {
+                document.getElementById("start_exam").disabled = false;
+            } else {
+                setTimeout(checkStartTime, 1000);
+            }
+        }
+    }
+
+    checkStartTime();
+
+    let start = document.getElementById("start_exam");
+
+    let handlestart = async (e) => {
+        e.preventDefault();
+        let room = `room${document.getElementById("exam_id").innerHTML}`;
+        let response = await fetch(`/vidchat/gettoken/?channel=${room}`);
+        let data = await response.json();
+        let token = data.token;
+        let UID = data.uid;
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("UID", UID);
+        sessionStorage.setItem("room", room);
+        window.open(`/vidchat/room/${document.getElementById("exam_id").innerHTML}/start`, "_self")
+    }
+
+    start.addEventListener("click", handlestart);
+
+</script>
+{% endblock %}

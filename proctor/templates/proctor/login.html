@@ -1,0 +1,19 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+    <h2>Login:</h2>
+    {{ message }}
+    <br>
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input autofocus class="form-control" style="background-color: rgb(54, 54, 54);color: white;" type="text" name="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <input class="form-control" style="background-color: rgb(54, 54, 54);color: white;" type="password" name="password" placeholder="Password">
+        </div>
+        <input class="my_pri_button" type="submit" value="Login">
+    </form>
+    <br>
+    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+{% endblock %}

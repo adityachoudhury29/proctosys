@@ -1,0 +1,66 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proctorsys</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="{% static 'styles/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <nav>
+        <h1 id="boss-heading">ProctoSys</h1>
+        <div class="navbar-content">
+            <div>
+                <h5>Hey there <strong>{{user.first_name}} {{user.last_name}}!</strong></h5>
+            </div>
+            <div class="hamburger-icon">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+        <div class="panel">
+            <a href="{% url 'logout' %}"><button class="btn btn-danger" style="width: 100%;">Logout</button></a>
+            {% if user.is_superuser %}
+            <a href="/admin"><button class="btn btn-secondary" style="width: 100%;">Admin</button></a>
+            {% endif %}
+        </div>
+    </nav>    
+    {% else %}
+    <nav>
+        <h1 id="boss-heading">ProctoSys</h1>
+        <h5>Login/Register</h5>
+    </nav>
+    {% endif %}
+    <hr>
+    {% block body %}{% endblock %}
+    {% block script %}{% endblock %}
+    <!-- {% if user.is_authenticated %}
+    <footer>
+        <div class="footer-container">
+            <div class="footer-contact">
+                <h3>Contact Support</h3>
+                <p>Email: <a href="mailto:contact@example.com">contact@example.com</a></p>
+                <p>Phone: <a href="tel:+1234567890">+1 234 567 890</a></p>
+            </div>
+        </div>
+    </footer>
+    {% endif %} -->
+    <script>
+        document.getElementById('boss-heading').addEventListener('click', function(){
+            window.location.href = "/";
+        });
+        document.querySelector('.hamburger-icon').addEventListener('click', function() {
+            document.querySelector('.panel').classList.toggle('open');
+        });
+
+        document.querySelector('.panel').addEventListener('click', function() {
+            document.querySelector('.panel').classList.remove('open');
+        });
+    </script>
+</body>
+</html>

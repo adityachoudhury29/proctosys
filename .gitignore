@@ -1,0 +1,4 @@
+myenv
+datadump.json
+db.sqlite3
+.env

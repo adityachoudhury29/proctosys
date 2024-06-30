@@ -1,0 +1,90 @@
+{% extends 'proctor/layout.html' %}
+{% load static %}
+
+{% block body %}
+    <h2>Edit Questions: {{ exam.title }}</h2>
+    <div hidden id="exam_id">{{exam.pk}}</div>
+    <div id="questions_div">
+        {% for q in questions %}
+            <div class="question-item" data-question-id="{{ q.id }}">
+                <input type="text" class="question-text" value="{{ q.question }}" />
+                <input type="text" class="answer-text" value="{{ q.answer }}" />
+                <button type="button" class="remove-question-btn">Remove</button>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <button type="button" id="add-question-btn" class="btn btn-info">Add Question</button>
+    <button type="button" id="save-questions-btn" class="btn btn-success">Save Questions</button>
+{% endblock %}
+
+{% block script %}
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('add-question-btn').addEventListener('click', function() {
+        const newQuestionDiv = document.createElement('div');
+        newQuestionDiv.classList.add('question-item');
+        newQuestionDiv.innerHTML = `
+            <input type="text" class="question-text" placeholder="Question" />
+            <input type="text" class="answer-text" placeholder="Answer" />
+            <button type="button" class="remove-question-btn">Remove</button>
+        `;
+        document.getElementById('questions_div').appendChild(newQuestionDiv);
+
+        newQuestionDiv.querySelector('.remove-question-btn').addEventListener('click', function() {
+            newQuestionDiv.remove();
+        });
+    });
+
+    document.querySelectorAll('.remove-question-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            button.parentElement.remove();
+        });
+    });
+
+    document.getElementById('save-questions-btn').addEventListener('click', function() {
+        const questions = [];
+        document.querySelectorAll('.question-item').forEach(item => {
+            const questionId = item.getAttribute('data-question-id');
+            const questionText = item.querySelector('.question-text').value;
+            const answerText = item.querySelector('.answer-text').value;
+            questions.push({ id: questionId, question: questionText, answer: answerText });
+        });
+
+        const id=document.getElementById('exam_id').textContent.trim();
+
+        fetch(`/vidchat/save-questions/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ questions: questions })
+        }).then(response => {
+            console.log(response);
+            if (response.ok) {
+                window.location.href="/vidchat";
+                alert('Questions saved successfully!');
+            } else {
+                alert('Failed to save questions');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

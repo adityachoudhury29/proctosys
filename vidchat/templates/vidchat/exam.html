@@ -1,0 +1,20 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+<br>
+<ul>
+    {% if profile.role != "admin" %}
+        <h1>Your pending exams:</h1>
+        {% for exam in exams %}
+            <li><a href="{% url 'room' id=exam.id %}">{{ exam.title }}</a></li>
+        {% endfor %}
+    {% else %}
+        <h1>Active exams:</h1>
+        {% for exam in exams %}
+            <li><a href="{% url 'exam_page' id=exam.id %}">{{ exam.title }}</a>&nbsp;&nbsp;
+            </li>
+            <br>
+        {% endfor %}
+    {% endif %}
+</ul>
+{% endblock %}  

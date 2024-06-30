@@ -1,0 +1,39 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+    <h1>Register:</h1>
+    {{ message }}
+    <br>
+    <form action="{% url 'register' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input required class="form-control" style="background-color: rgb(54, 54, 54);color: white;" autofocus type="text" name="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <input required class="form-control" style="background-color: rgb(54, 54, 54);color: white;" type="text" name="first_name" placeholder="First Name">
+        </div>
+        <div class="form-group">
+            <input required class="form-control" style="background-color: rgb(54, 54, 54);color: white;" type="text" name="last_name" placeholder="Last Name">
+        </div>
+        <div class="form-group">
+            <input required class="form-control" style="background-color: rgb(54, 54, 54);color: white;" type="email" name="email" placeholder="Email Address(optional)">
+        </div>
+        <div class="form-group">
+            <select class="form-control" style="background-color: rgb(54, 54, 54);color: white;" name="role">
+                <option value="select" default>Select role</option>
+                <option value="student">Student</option>
+                <option value="proctor">Proctor</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input required class="form-control" style="background-color: rgb(54, 54, 54);color: white;" type="password" name="password" placeholder="Password" minlength="8">
+        </div>
+        <div class="form-group">
+            <input required class="form-control" style="background-color: rgb(54, 54, 54);color: white;" type="password" name="confirmation" placeholder="Confirm Password">
+        </div>
+        <input required class="my_pri_button" type="submit" value="Register">
+    </form>
+    <br>
+
+    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+{% endblock %}

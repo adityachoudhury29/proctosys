@@ -1,0 +1,143 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+{% if user.is_authenticated %}
+    {% if profile.role == "student" %}
+    STUDENTS CANNOT CREATE EXAM!
+
+    {% else %}
+    <br>
+    <div>
+    <h2>CREATE EXAM HERE:</h2>
+    <form id="exam-form" method="post" action="{% url 'save_exam' %}">
+        <input type="text" placeholder="Exam Title" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+        <input type="number" placeholder="Exam Duration(in mins.)" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+        <textarea type="text" placeholder="Description" rows="6" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;border-radius: 6px;border-color: white;"></textarea>
+        <input type="time" placeholder="start time" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+        <input type="time" placeholder="end time" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+        <input type="date" placeholder="Exam Date" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+        <input type="text" placeholder="student username" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+        <input type="text" placeholder="proctor username" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+        <br><br>
+        <div id="questions-container">
+        </div>
+        <button type="button" class="my_pri_button" onclick="addQuestion()">Add Question</button>
+        <button type="submit" class="btn btn-success">Save Exam</button>
+    </form>
+</div>
+
+    {% endif %}
+{% else %}
+    logged out
+    <a href="{% url 'register' %}">Register</a>
+    <a href="{% url 'login' %}">login</a>
+{% endif %}
+{% endblock %}
+
+
+{% block script %}
+<script>
+    let questionCount = 0;
+
+    function addQuestion() {
+        questionCount++;
+        const container = document.getElementById('questions-container');
+        const questionField = document.createElement('div');
+        questionField.innerHTML = `
+            <label id="questionlabel_${questionCount}">Question: ${questionCount}</label>
+            <input type="text" id="question_${questionCount}" name="question_${questionCount}" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+            <label for="answer_${questionCount}">Answer:</label>
+            <input type="text" id="answer_${questionCount}" name="answer_${questionCount}" style="background-color: #393939;color: white;padding: 7px;margin-bottom: 10px; width: 100%;">
+            <button type="button" class="btn btn-danger" id="${questionCount}" onclick="deleteQuestion(this)">Delete</button>
+        `;
+        container.appendChild(questionField);
+    }
+
+    function deleteQuestion(button) {
+        let current = parseInt(button.id);
+        
+        const questionField = button.parentElement;
+        questionField.remove();
+        for(let i = current+1; i <= questionCount; i++){
+            const questionInput = document.getElementById(`question_${i}`);
+            const questionLabel = document.getElementById(`questionlabel_${i}`);
+            const answerInput = document.getElementById(`answer_${i}`);
+            const deleteButton = document.getElementById(`${i}`);
+            deleteButton.id = `${i-1}`;
+            questionInput.name = `question_${i-1}`;
+            questionInput.id = `question_${i-1}`;
+            questionLabel.innerHTML = `Question: ${i-1}`;
+            questionLabel.id = `questionlabel_${i-1}`;  
+            answerInput.name = `answer_${i-1}`;
+            answerInput.id = `answer_${i-1}`;
+        }
+        questionCount--;
+        
+    }
+
+    document.getElementById('exam-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const questions = [];
+        for (let i = 1; i <= questionCount; i++) {
+            const questionInput = document.getElementById(`question_${i}`);
+            const question = questionInput.value.trim();
+            if (question) {
+                const answerInput = document.getElementById(`answer_${i}`);
+                questions.push({
+                    question: question,
+                    answer: answerInput.value.trim(),
+                });
+            }
+        }
+
+        // Send questions data as JSON to the backend
+        fetch('/save_exam/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ questions: questions, exam: {
+                title: document.querySelector('input[placeholder="Exam Title"]').value,
+                duration: document.querySelector('input[placeholder="Exam Duration(in mins.)"]').value,
+                description: document.querySelector('textarea').value,
+                start_time: document.querySelector('input[placeholder="start time"]').value,
+                end_time: document.querySelector('input[placeholder="end time"]').value,
+                exam_date: document.querySelector('input[placeholder="Exam Date"]').value,
+                student_username: document.querySelector('input[placeholder="student username"]').value,
+                proctor_username: document.querySelector('input[placeholder="proctor username"]').value}}),
+        })
+        .then(response => {
+            console.log(response)
+            if (response.ok) {
+                window.location.href = '/createexam/';
+                alert('Exam saved successfully!');
+            } else {
+                alert(response.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error);
+        });
+    });
+
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    </script>
+{% endblock %}

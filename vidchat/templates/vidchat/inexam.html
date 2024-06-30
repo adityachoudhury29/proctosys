@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proctorsys</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="{% static 'styles/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+{% block body %}
+
+<div hidden id="duration">{{ exam.duration }}</div>
+<div hidden id="role">{{ myprofile.role }}</div>
+<div hidden id="examid">{{ exam.id }}</div>
+<div hidden id="exam_end_time">{{ exam.end_time }}</div>
+<div hidden id="me">{{ request.user.username }}</div>
+<div id="timer"></div>
+<h1>{{ exam.title }}</h1>
+<hr>
+<br>
+{% if myprofile.role == "student" %}
+<p id="stat-message"></p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6 col-md-12 mb-3" id="questions-div" class="hidden">
+            <h3>Questions:</h3>
+            <form action="{% url 'submit' id=exam.id %}" id="exam-form" method="post">
+                {% csrf_token %}
+                <ol>
+                    {% for i in questions %}
+                    <hr style="background-color: black;">
+                    <li><p>{{i.question}}</p><input type="text" name="qa_{{i.id}}" placeholder="Answer" class="form-control"></li>
+                    {% endfor %}
+                </ol>
+                <hr style="background-color: black;">
+                <button type="submit" class="btn btn-success" id="submittest">Submit</button>
+            </form>
+        </div>
+        <div class="col-lg-6 col-md-12 mb-3 d-flex flex-column align-items-center">
+            <div id="video-streams" class="mb-3" style="height: 300px;width: 100%;max-width: 300px;border-radius: 20px;"></div>
+            <div class="chat-message-div w-100" style="max-width: 300px;">
+                <div id="scrollablediv" style="overflow-y: scroll;border-radius: 20px;padding: 6px; height: 300px; font-size: 15px; background-color: rgb(25, 25, 25);">
+                    <ul id="chat-log" style="list-style-type: none;color: white;">
+                        {% for chat in chats %}
+                        {% if request.user.username == chat.sender.username %}
+                        <li style="color: white;">
+                            <br>
+                            <p>{{ chat.content }}</p>
+                        </li>
+                        {% else %}
+                        <li style="color: orange;">
+                            <br>
+                            <p>{{ chat.content }}</p>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {{ room|json_script:"room-name" }}
+            </div>
+            <div class="input-group mt-3 w-100" style="max-width: 300px;">
+                <input type="text" class="form-control" style="background-color: rgb(54, 54, 54);color: white;" id="chat-message-input" placeholder="Message" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="chat-message-submit">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% elif myprofile.role == "proctor" %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6 col-md-12 mb-3 d-flex flex-column align-items-center">
+            <h3>Student is attending test! Please proctor carefully.</h3>
+            <button class="btn btn-danger mt-3" id="end-exam">End Exam</button>
+        </div>
+        <div class="col-lg-6 col-md-12 mb-3 d-flex flex-column align-items-center">
+            <div id="video-streams" class="mb-3" style="height: 300px;width: 100%;max-width: 300px;border-radius: 20px;"></div>
+            <div class="chat-message-div w-100" style="max-width: 300px;">
+                <div id="scrollablediv" style="overflow-y: scroll;border-radius: 20px;padding: 6px; height: 300px; font-size: 30px; background-color: rgb(25, 25, 25);">
+                    <ul id="chat-log" style="list-style-type: none;color: white;">
+                        {% for chat in chats %}
+                        {% if request.user.username == chat.sender.username %}
+                        <li style="color: white;">
+                            <br>
+                            <p>{{ chat.content }}</p>
+                        </li>
+                        {% else %}
+                        <li style="color: orange;">
+                            <br>
+                            <p>{{ chat.content }}</p>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {{ room|json_script:"room-name" }}
+            </div>
+            <div class="input-group mt-3 w-100" style="max-width: 300px;">
+                <input type="text" class="form-control" style="background-color: rgb(54, 54, 54);color: white;" id="chat-message-input" placeholder="Message" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="chat-message-submit">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+</body>
+
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT5TgVdKtMoskW2UAdwdVbxH0/Gp0iMVYdCMwP78P7r65hb6gD" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq3x0g/J6LkLhQ3i6YX9fBq4BjNyvXNlD5vAzAAw/uxs5B8b4z" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-WeJ3VuAtSCM4EhbzBPTKMo8XniuT4IXpXkF3d6IKnj41lD0/xuo+yeYIhwKZ2aP7" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'assets/AgoraRTC_N-4.20.2.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/streams.js' %}"></script>
+{% endblock %}
+
+</html>

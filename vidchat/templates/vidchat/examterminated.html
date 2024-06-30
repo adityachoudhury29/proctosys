@@ -1,0 +1,16 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+<h2>Your exam was terminated due to change in visibility of screen, signifying change in tab, window or navigation to another url.</h2>
+<p>Contact support for more details.</p>
+<br>
+<h3><a href="{% url 'index' %}">Go to home</a></h3>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        localStorage.clear();
+    });
+</script>
+{% endblock %}

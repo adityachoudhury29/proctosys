@@ -1,0 +1,14 @@
+{% extends 'proctor/layout.html' %}
+
+{% block body %}
+<h1>Exams ond date: {{date}}</h1>
+{% if message %}
+<p>{{message}}</p>
+{% endif %}
+<br>
+<ul>
+{% for i in exams %}
+<li><a href="/vidchat/room/{{i.id}}">{{ i.title }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
